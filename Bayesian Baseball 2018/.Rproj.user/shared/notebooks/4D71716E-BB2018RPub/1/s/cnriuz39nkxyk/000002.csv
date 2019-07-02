@@ -1,0 +1,69 @@
+"0","nonmlm.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home- fielding
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=mydata,
+  iter=1000, warmup=250, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+"
+"1","DIAGNOSTIC(S) FROM PARSER:"
+"1","
+"
+"1","Info (non-fatal):"
+"1","
+"
+"1","Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable."
+"1","
+"
+"1","If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform."
+"1","
+"
+"1","Left-hand-side of sampling statement:"
+"1","
+"
+"1","    a ~ normal(...)"
+"1","
+"
+"1","
+"
+"2","running command 'C:/PROGRA~1/R/R-3.5.2/bin/x64/R CMD SHLIB filef983eb17087.cpp 2> filef983eb17087.cpp.err.txt' had status 99"
+"2","
+"
+"2","
+"
+"2","Error in sink(type = ""output"") : invalid connection
+"
+"2","Error in map2stan(alist(rdiff ~ dnorm(mu, sigma), mu <- A + BH + PH +  : 
+  Something went wrong in at least one chain. Debug your model while setting chains=1 and cores=1. Once the model is working with a single chain and core, try using multiple chains/cores again.
+invalid connection
+"

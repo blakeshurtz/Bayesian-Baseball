@@ -1,0 +1,21 @@
+"0","ws <- read_csv(""data/WS Investigation/ws.csv"")"
+"2","Missing column names filled in: 'X1' [1]"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  Date = [31mcol_character()[39m,
+  home = [31mcol_character()[39m,
+  away = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","ws <- as.data.frame(ws)"
+"0","namesws <- colnames(ws)"
+"0","attributes(ws) <- NULL"
+"0","ws <- as.data.frame(ws)"
+"0","colnames(ws) <- namesws"
+"0","colnames(ws)[1] <- ""X"""
+"0","###"
+"0","TEMP <- ws[1,] #rdiff is how they performed as the home team"
+"0","TEMP2 <- rbind(mydata, TEMP)"

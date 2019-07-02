@@ -1,0 +1,5 @@
+"0","ggplot(link.model) + 
+  geom(histogram) 
+"
+"2","Error in geom(histogram) : could not find function ""geom""
+"

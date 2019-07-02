@@ -1,0 +1,199 @@
+"0","#prior probabilities- see old notes for causes to model change."
+"0","surviv <- NULL; surviv[1] <- prob_success5"
+"0","TEMP <- wsg5prepbp[2,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[2] <- prob_success "
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[3,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[3] <- prob_success "
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[4,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[4] <- prob_success "
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[5,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[5] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[6,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[6] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[7,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[7] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[8,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[8] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[9,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[9] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[10,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[10] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[11,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[11] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[12,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[12] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[13,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[13] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[14,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[14] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[15,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[15] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[16,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[16] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"2","
+"

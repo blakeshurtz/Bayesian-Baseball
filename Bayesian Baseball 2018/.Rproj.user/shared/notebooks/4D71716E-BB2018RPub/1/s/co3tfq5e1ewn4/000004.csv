@@ -1,0 +1,24 @@
+"0","link.model <- link(game5.m, data=data.frame(TEMP))"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","#Team Effects"
+"0","#BOS (away)"
+"0","BOSA <- melt(link.model$A); colnames(BOSA) <- c(""Category"", ""x2bat"", ""Value"")"
+"0","BOSA$Category = rep(""BOS_away"", nrow(BOSA)); "
+"0","BOSA <- BOSA[,c(""Category"", ""Value"")]"
+"0","BOSA$Value = BOSA$Value * -1  #for visualization"
+"0","#LAD (home)"
+"0","LADH <- melt(link.model$H); colnames(LADH) <- c(""Category"", ""x2pit"", ""Value"")"
+"2","Error in names(x) <- value : 
+  'names' attribute [3] must be the same length as the vector [0]
+"

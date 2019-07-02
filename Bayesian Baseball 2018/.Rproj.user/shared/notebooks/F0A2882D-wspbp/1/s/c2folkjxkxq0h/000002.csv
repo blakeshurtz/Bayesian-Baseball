@@ -1,0 +1,19 @@
+"0","TEMP <- wspre[16,] #rdiff is how they performed as the home team"
+"0","sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","prob_success <- sum(sim.model>0) / length(sim.model); prob_success"
+"1","[1]"
+"1"," 0.008"
+"1","
+"

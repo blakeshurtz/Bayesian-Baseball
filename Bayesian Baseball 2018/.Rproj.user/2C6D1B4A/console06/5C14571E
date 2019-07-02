@@ -1,0 +1,23 @@
+[0m[0KMicrosoft Windows [Version 10.0.17134.706][0K[?25l
+(c) 2018 Microsoft Corporation. All rights reserved.[0K
+[0K
+D:\Google Drive\Life\Statistics\Bayesian Baseball II>dbinom(4, size=7, prob=prob_succes[0Ks
+1) + dbinom(5, size=7, prob=prob_success1) + dbinom(6, size=7, prob=prob_success1) + db[0Ki
+nom(7, size=7, prob=prob_success1)[0K
+'dbinom' is not recognized as an internal or external command,[0K
+operable program or batch file.[0K
+[0K
+D:\Google Drive\Life\Statistics\Bayesian Baseball II>[0K[?25h[?25l[8A(c) 2018 Microsoft Corporation. All rights reser[0Kv
+ed.[0K
+[0K
+D:\Google Drive\Life\Statistics\Bayesian Basebal[0Kl
+ II>dbinom(4, size=7, prob=prob_success1) + dbin[0Ko
+m(5, size=7, prob=prob_success1) + dbinom(6, siz[0Ke
+=7, prob=prob_success1) + dbinom(7, size=7, prob[0K=
+prob_success1)[0K
+'dbinom' is not recognized as an internal or ext[0Ke
+rnal command,[0K
+operable program or batch file.[0K
+[0K
+D:\Google Drive\Life\Statistics\Bayesian Basebal[0Kl
+ II>[0K[?25hN[0K[6n[?25l II>[0K[?25h[6n

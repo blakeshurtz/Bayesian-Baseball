@@ -1,0 +1,69 @@
+"0","standata <- data[,c(""score"", ""opp_team"", ""pitera_norm"", ""wl_norm"")]"
+"0","set.seed(1234)"
+"0","model2 <- map2stan("
+"0","  alist("
+"0","    score ~ dnorm( mu , sigma ) ,"
+"0","    mu <- a + a_team[opp_team] + b * pitera_norm + c * wl_norm,"
+"0","    sigma ~ dcauchy(0, 2.5),"
+"0","    a ~ dnorm(0,3),"
+"0","    a_team[opp_team] ~ dnorm( ai , as ), #adaptive prior from the data"
+"0","    ai ~ dnorm(0, 1),"
+"0","    as ~ dcauchy(0,2),"
+"0","    b ~ dnorm( 0, 1 ),"
+"0","    c ~ dnorm(0,1)"
+"0","  ),"
+"0","  data=standata, iter=12000, warmup=3000, chains=4, cores=4)"
+"1","In file included from C:/Users/blake/Documents/R/win-library/3.4/BH/include/boost/config.hpp:39:0,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/BH/include/boost/math/tools/config.hpp:13,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math.hpp:4,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+"
+"1","                 from file76a035d459b.cpp:8:
+"
+"1","C:/Users/blake/Documents/R/win-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: ""BOOST_NO_CXX11_RVALUE_REFERENCES"" redefined
+"
+"1"," #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+"
+"1"," ^
+"
+"1","<command-line>:0:0: note: this is the location of the previous definition
+"
+"1","In file included from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:44:0,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math.hpp:4,
+"
+"1","                 from C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+"
+"1","                 from file76a035d459b.cpp:8:
+"
+"1","C:/Users/blake/Documents/R/win-library/3.4/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: 'void stan::math::set_zero_all_adjoints()' defined but not used [-Wunused-function]
+"
+"1","     static void set_zero_all_adjoints() {
+"
+"1","                 ^
+"
+"1","[ 3600 / 36000 ]"
+"1","[ 7200 / 36000 ]"
+"1","[ 10800 / 36000 ]"
+"1","[ 14400 / 36000 ]"
+"1","[ 18000 / 36000 ]"
+"1","[ 21600 / 36000 ]"
+"1","[ 25200 / 36000 ]"
+"1","[ 28800 / 36000 ]"
+"1","[ 32400 / 36000 ]"
+"1","[ 36000 / 36000 ]"
+"1","
+"

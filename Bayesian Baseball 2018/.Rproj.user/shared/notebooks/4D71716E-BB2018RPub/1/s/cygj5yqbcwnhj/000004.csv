@@ -1,0 +1,5 @@
+"0","load("".RData"", envir = parent.frame(), verbose = FALSE)
+"
+"2","Warning:"
+"2"," call dbDisconnect() when finished working with a connection
+"

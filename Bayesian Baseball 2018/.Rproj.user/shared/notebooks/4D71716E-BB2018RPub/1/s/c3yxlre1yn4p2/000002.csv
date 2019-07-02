@@ -1,0 +1,18 @@
+"0","mydata <- read_csv(""data/mydata.csv"")"
+"2","Missing column names filled in: 'X1' [1]"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  Date = [31mcol_character()[39m,
+  home = [31mcol_character()[39m,
+  away = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","mydata <- as.data.frame(mydata)"
+"0","namesmydata <- colnames(mydata)"
+"0","attributes(mydata) <- NULL"
+"0","mydata <- as.data.frame(mydata)"
+"0","colnames(mydata) <- namesmydata"
+"0","colnames(mydata)[1] <- ""X"""

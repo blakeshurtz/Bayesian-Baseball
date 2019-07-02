@@ -1,0 +1,7 @@
+"0","library(knitr)"
+"2","package ‘knitr’ was built under R version 3.4.4"
+"0","Cubs <- c(0, 5, 0, 2, 3, 9, 8)"
+"0","Indians <- c(6, 1, 1, 7, 2, 3, 7)"
+"0","ws <- rbind(Cubs, Indians)"
+"0","kable(ws)"
+"2","The table should have a header (column names)"

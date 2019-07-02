@@ -1,0 +1,5 @@
+"0","post <- extract.samples(vivs.m, inc_warmup=TRUE)"
+"0","TEMP <- as.data.frame(post$sigma); TEMP$index <- seq(1:nrow(TEMP))"
+"0","ggplot(TEMP, aes(x=index, y=post$sigma)) + geom_line() + theme_minimal() +"
+"0","  ylab(""sigma"") + xlab("""") + ggtitle(""Traceplot of Sigma"") +"
+"0","  geom_rect(aes(xmin=0, xmax=1000, ymin=2, ymax=2.25), alpha=0.005)"

@@ -1,0 +1,6 @@
+"0","ggplot(TEMP) + "
+"0","  geom_density(aes(x = sigma, linetype=class), kernel=""gaussian"") +"
+"0","  xlim(-1, 5) +"
+"0","  theme_minimal() +"
+"0","  theme(legend.position=""bottom"") +"
+"0","  ggtitle(""Prior and Posterior For Sigma"")"

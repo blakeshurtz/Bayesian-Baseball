@@ -1,0 +1,9 @@
+"0","TEMP <- NULL"
+"0","game1.post <- -1 * as.data.frame(sim.model1) #predicting game 1- make negative for probability LAD (away) win greater than 0"
+"0","game2.post <- -1* as.data.frame(sim.model2); colnames(TEMP2) <- c(""V2"") #predicting game 2- make negative for probability LAD (away) win greater than 0"
+"0","game3.post <- as.data.frame(sim.model3); colnames(TEMP3) <- c(""V3"") #predicting game 3"
+"0","game4.post <- as.data.frame(sim.model4); colnames(TEMP4) <- c(""V4"") #predicting game 4 (LA won game 3)"
+"0","game5.post <- as.data.frame(sim.model5); colnames(TEMP5) <- c(""V5"") #predicting game 5"
+"0","posterior.distributions"
+"2","Error: object 'posterior.distributions' not found
+"

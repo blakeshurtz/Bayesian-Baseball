@@ -1,0 +1,18 @@
+"0","wspreint <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    mu <- a + h[home] + a[away],
+    ###adaptive priors
+    h[home] ~ dnorm( hm , hs ), #adaptive prior from the data
+    hm ~ dnorm(0, 1),
+    hs ~ dcauchy(0,2),
+    a[away] ~ dnorm( am , as ), #adaptive prior from the data
+    am ~ dnorm(0, 1),
+    as ~ dcauchy(0,2),
+    a ~ dnorm(0,3)  
+    sigma ~ dcauchy(0,2)),
+"
+"2","Error: unexpected symbol in:
+""    a ~ dnorm(0,3)  
+    sigma""
+"

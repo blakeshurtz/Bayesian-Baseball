@@ -1,0 +1,4 @@
+"0","plot(compare(nonmlm.m, varint.m, vivs.m))"
+"2","Error in compare(nonmlm.m, varint.m, vivs.m) : 
+  object 'nonmlm.m' not found
+"

@@ -1,0 +1,29 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r alternativesimulations, eval=FALSE}
+'trying to average distribution- not a big change
+sim.model5.test <- sim(game5.m, data=as.data.frame(ws), n=1500) #simulate game 5 with previous game data
+str(sim.model5.test); sim.model5.test <- as.data.frame(sim.model5.test); 
+sim.model5.test$V6 <- (sim.model5.test$V1 + sim.model5.test$V2 + sim.model5.test$V3 + sim.model5.test$V4 + sim.model5.test$V5)/5
+game5.posterior <- sim.model5.test$V6; game5.posterior <- as.data.frame(game5.posterior); colnames(game5.posterior)<- "V5" 
+'
+'with link function
+link.model5.test <- link(game5.m, data=as.data.frame(ws), n=1500) #simulate game 5 with previous game data
+str(link.model5.test); hist(link.model5.test$mu)
+prob_success <- sum(link.model5.test$mu>0) / length(link.model5.test); prob_success 
+nrow(link.model5.test)
+nrow(link.model5.test$mu>0)
+str(sim.model5.test); sim.model5.test <- as.data.frame(sim.model5.test); 
+sim.model5.test$V6 <- (sim.model5.test$V1 + sim.model5.test$V2 + sim.model5.test$V3 + sim.model5.test$V4 + sim.model5.test$V5)/5
+game5.posterior <- sim.model5.test$V6; game5.posterior <- as.data.frame(game5.posterior); colnames(game5.posterior)<- "V5" 
+'
+
+
+###trying with previous game data
+#sim.model5 <- sim(game5.m, data=as.data.frame(ws[5,]), n=1500) #simulate game 5 with post-game 4 data (LAD home)
+###trying with average game data (LAD at home- games 3-5)
+```

@@ -1,0 +1,3 @@
+"0","###"
+"0","ggplot(TEMP, aes(Rhat)) + geom_histogram(binwidth=.00025, fill=""white"", color=""black"") + theme_minimal() +"
+"0","  xlab(TeX(""$\\hat{R}$"")) + ylab(""Frequency"") + ggtitle(""Gelman-Rubin Convergence Diagnostic"")"

@@ -1,0 +1,3 @@
+"0","TEMP <- mydata"
+"0","TEMP$home <- coerce_index(TEMP$home)"
+"0","TEMP$away <- coerce_index(TEMP$away)"

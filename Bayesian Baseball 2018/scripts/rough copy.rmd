@@ -1,0 +1,1007 @@
+---
+title: "Bayesian Baseball"
+author: "Blake Shurtz"
+date: "February 5, 2019"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(RMariaDB)
+con <- dbConnect(MariaDB(),
+                 user = 'guest',
+                 password = 'password',
+                 host = 'mydbinstance4.c1uducbod6js.us-west-1.rds.amazonaws.com',
+                 dbname='bayesianbaseball')
+mydata2 <- dbReadTable(conn = con, name = 'mydata', value = mydata2, overwrite = FALSE)
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rethinking)
+library(tidyverse)
+library(reshape)
+mydata <- read_csv("data/mydata.csv")
+mydata <- as.data.frame(mydata)
+namesmydata <- colnames(mydata)
+attributes(mydata) <- NULL
+mydata <- as.data.frame(mydata)
+colnames(mydata) <- namesmydata
+colnames(mydata)[1] <- "X"
+```
+
+OPEN modelexecution2.RDATA.
+
+###The Model  
+
+```{r, message=FALSE, eval=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+
+vivs.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood function, a function of multiple linear models
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home & away fielding- group-level parameters
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors for the correlation matrix
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=mydata,
+  iter=10000, warmup=1000, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+
+```
+
+###Diagnostics
+
+```{r traceplot, fig.width=10, fig.height=4}
+post <- extract.samples(vivs.m, inc_warmup=TRUE)
+TEMP <- post$sigma
+TEMP <- as.data.frame(TEMP)
+TEMP$index <- seq(1:nrow(TEMP))
+ggplot(TEMP, aes(x=index, y=TEMP)) + geom_line() + theme_minimal() +
+  ylab("sigma") + xlab("") + ggtitle("Traceplot of Sigma") +
+  geom_rect(aes(xmin=0, xmax=200, ymin=2, ymax=2.25), alpha=0.005)
+```
+
+```{r neff and rhat, warning=FALSE}
+library(latex2exp)
+###
+TEMP <- precis(vivs.m, depth=3)
+###
+ggplot(TEMP, aes(n_eff)) + geom_histogram(binwidth=250, fill="white", color="black") + theme_minimal() +
+  xlab("Number of Effective Samples") + ylab("Frequency") + ggtitle("Efficiency of Chain Convergence")
+###
+ggplot(TEMP, aes(Rhat)) + geom_histogram(binwidth=.00025, fill="white", color="black") + theme_minimal() +
+  xlab(TeX("$\\hat{R}$")) + ylab("Frequency") + ggtitle("Gelman-Rubin Convergence Diagnostic")
+
+```
+
+###Data, Priors, Posteriors
+```{r}
+ggplot(mydata, aes(rdiff)) + geom_histogram(binwidth=1, fill="white", color="black") + theme_minimal() +
+  xlab(("Difference in Scores (Home - Away)")) + ylab("Frequency") + ggtitle("Distribution of Difference in Runs")
+```
+
+
+```{r priorpostsigma, message=FALSE, echo=FALSE, warning=FALSE}
+PRIOR <- extract.prior(vivs.m, n=750)
+POST <- extract.samples(vivs.m, n=750)
+
+#prior for sigma instead
+sigma <- PRIOR$sigma; sigma <- as.data.frame(sigma); sigma$class <- rep("prior", nrow(sigma))
+#post for sigma
+sigma.po <- POST$sigma; sigma.po <- as.data.frame(sigma.po); sigma.po$class <- rep("post", nrow(sigma.po))
+colnames(sigma.po) <- c("sigma", "class")
+TEMP <- as.data.frame(rbind(sigma, sigma.po))
+
+ggplot(TEMP) + 
+  geom_density(aes(x = sigma, linetype=class), kernel="gaussian") +
+  xlim(-1, 5) +
+  theme_minimal() +
+  theme(legend.position="bottom") +
+  ggtitle("Prior and Posterior For Sigma")
+```
+
+###Correlation Matrix
+```{r scatterplotrho, echo=FALSE, fig.width=6, fig.height=6, warning=FALSE}
+###HOME
+R <- rlkjcorr(750, K=3, eta=4) #750, consistent with post samples
+R <- as.data.frame(R)
+TEMP <- NULL
+#prior
+TEMP$home <- as.data.frame(R[,2,2]); #random correlations with eta=4
+TEMP$away <- as.data.frame(R[,3,2]); #random correlations with eta=4
+TEMP <- as.data.frame(TEMP)
+colnames(TEMP) <- c("home", "away")
+#post
+post <- extract.samples(vivs.m)
+TEMP2 <- NULL
+TEMP2$home <- melt(post$Rho_home[,1,2]); ###correlation between intercepts and slopes (hits, home)
+TEMP2$away <- melt(post$Rho_away[,1,2]); ###same as above, but away (still hits)
+TEMP2 <- as.data.frame(TEMP2)
+colnames(TEMP2) <- c("home", "away")
+#bind
+TEMP <- rbind(TEMP, TEMP2)
+#group
+TEMP$group <- c(rep("prior", nrow(TEMP)/2), rep("posterior", nrow(TEMP)/2))
+#describe
+#head(TEMP)
+#dim(TEMP)
+#plot
+ggplot(TEMP, (aes(home, away))) +
+  geom_point(aes(alpha=rev(group)), size=.75) +
+  theme_minimal() +
+  theme(legend.position="bottom") +
+  ggtitle("Correlation between Intercepts and Slopes")
+```
+
+```{r scatterplot alternative}
+TEMP$B <- rev(TEMP$group)
+ggplot(TEMP, (aes(home, away))) +
+  geom_vline(xintercept=0, col="gray", size=.2) +
+  geom_hline(yintercept=0, col="gray", size=.2) +
+  geom_density2d(aes(alpha=B), col = "black", size=.2) +
+  theme_minimal() +
+  theme(legend.position="bottom") +
+  ggtitle("Correlation between Intercepts and Slopes") +
+  xlab("Home Team") + ylab("Away Team") 
+```
+
+
+###Model Comparison
+```{r, echo=FALSE}
+TEMP <- mydata
+TEMP$home <- coerce_index(TEMP$home)
+TEMP$away <- coerce_index(TEMP$away)
+```
+
+```{r nonmlm.m,eval=FALSE, echo=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+
+nonmlm.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    mu <- inter +
+      h * home + a * away + 
+      hits_h * Hh + double_h * B2Bh + triple_h * B3Bh + HR_h * BHRh + balls_h * BBBh +
+      hits_a * Ha + double_a * B2Ba + triple_a * B3Ba + HR_a * BHRa + balls_a * BBBa +
+      hits_allowed_h * HHAh + pballs_h * PBBh + pstrikeouts_h * PSOh +  strikes_h * Strh +
+      hits_allowed_a * HHAa + pballs_a * PBBa + pstrikeouts_a * PSOa + strikes_a * Stra +
+      fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a,
+    ###adaptive priors for coefficients
+    inter ~ dunif(-100, 100),
+    h ~ dunif(-100, 100),
+    a ~ dunif(-100, 100),
+    ###
+    hits_h ~ dunif(-100, 100),
+    hits_a ~ dunif(-100, 100),
+    ###
+    double_h ~ dunif(-100, 100),
+    double_a ~ dunif(-100, 100),
+    ###
+    triple_h ~ dunif(-100, 100),
+    triple_a ~ dunif(-100, 100),
+    ###
+    HR_h ~ dunif(-100, 100),
+    HR_a ~ dunif(-100, 100),
+    ###
+    balls_h ~ dunif(-100, 100),
+    balls_a ~ dunif(-100, 100),
+    ###
+    hits_allowed_h ~ dunif(-100, 100),
+    hits_allowed_a ~ dunif(-100, 100),
+    ###
+    pballs_h ~ dunif(-100, 100),
+    pballs_a ~ dunif(-100, 100),
+    ###
+    pstrikeouts_h ~ dunif(-100, 100),
+    pstrikeouts_a ~ dunif(-100, 100),
+    ###
+    strikes_h ~ dunif(-100, 100),
+    strikes_a ~ dunif(-100, 100),
+    ###standard priors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dunif(-100, 100),
+    sigma ~ dcauchy(0,2)),
+  data=TEMP,
+  iter=100, warmup=10, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+```
+
+```{r varint.m, eval=FALSE, echo=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+###
+varint.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    mu <- A + B + C + D,
+    A <- a + h[home] + a[away],
+    B <- b + hits_h * Hh + double_h * B2Bh + triple_h * B3Bh + HR_h * BHRh + balls_h * BBBh +
+             hits_a * Ha + double_a * B2Ba + triple_a * B3Ba + HR_a * BHRa + balls_a * BBBa,
+    C <- c + hits_allowed_h * HHAh + pballs_h * PBBh + pstrikeouts_h * PSOh +  strikes_h * Strh +
+             hits_allowed_a * HHAa + pballs_a * PBBa + pstrikeouts_a * PSOa + strikes_a * Stra,
+    D <- d + fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a,
+    ###adaptive priors for coefficients
+    h[home] ~ dnorm(h_mu, h_sigma),
+    h_mu ~ dnorm(0,1),
+    h_sigma ~  dcauchy(0,2), 
+    a[away] ~ dnorm(a_mu, a_sigma),
+    a_mu ~ dnorm(0,1),
+    a_sigma ~ dcauchy(0,2),
+    ###
+    hits_h ~ dnorm(hits_h_mu, hits_h_sigma),
+    hits_h_mu ~ dnorm(0,1),
+    hits_h_sigma ~ dcauchy(0,2), 
+    hits_a ~ dnorm(hits_a_mu, hits_a_sigma),
+    hits_a_mu ~ dnorm(0,1),
+    hits_a_sigma ~ dcauchy(0,2),
+    ###
+    double_h ~ dnorm(double_h_mu, double_h_sigma),
+    double_h_mu ~ dnorm(0,1),
+    double_h_sigma ~ dcauchy(0,2),
+    double_a ~ dnorm(double_a_mu, double_a_sigma),
+    double_a_mu ~ dnorm(0,1),
+    double_a_sigma ~ dcauchy(0,2),    
+    ###
+    triple_h ~ dnorm(triple_h_mu, triple_h_sigma),
+    triple_h_mu ~ dnorm(0,1),
+    triple_h_sigma ~ dcauchy(0,2),
+    triple_a ~ dnorm(triple_a_mu, triple_a_sigma),
+    triple_a_mu ~ dnorm(0,1),
+    triple_a_sigma ~ dcauchy(0,2),
+    ###
+    HR_h ~ dnorm(HR_h_mu, HR_h_sigma),
+    HR_h_mu ~ dnorm(0,1),
+    HR_h_sigma ~ dcauchy(0,2),
+    HR_a ~ dnorm(HR_a_mu, HR_a_sigma),
+    HR_a_mu ~ dnorm(0,1),
+    HR_a_sigma ~ dcauchy(0,2),    
+    ###
+    balls_h ~ dnorm(balls_h_mu, balls_h_sigma),
+    balls_h_mu ~ dnorm(0,1),
+    balls_h_sigma ~ dcauchy(0,2),
+    balls_a ~ dnorm(balls_a_mu, balls_a_sigma),
+    balls_a_mu ~ dnorm(0,1),
+    balls_a_sigma ~ dcauchy(0,2),      
+    ###
+    hits_allowed_h ~ dnorm(hits_allowed_h_mu, hits_allowed_h_sigma),
+    hits_allowed_h_mu ~ dnorm(0,1),
+    hits_allowed_h_sigma ~ dcauchy(0,2),
+    hits_allowed_a ~ dnorm(hits_allowed_a_mu, hits_allowed_a_sigma),
+    hits_allowed_a_mu ~ dnorm(0,1),
+    hits_allowed_a_sigma ~ dcauchy(0,2),      
+    ###
+    pballs_h ~ dnorm(pballs_h_mu, pballs_h_sigma),
+    pballs_h_mu ~ dnorm(0,1),
+    pballs_h_sigma ~ dcauchy(0,2),
+    pballs_a ~ dnorm(pballs_a_mu, pballs_a_sigma),
+    pballs_a_mu ~ dnorm(0,1),
+    pballs_a_sigma ~ dcauchy(0,2),      
+    ###
+    pstrikeouts_h ~ dnorm(pstrikeouts_h_mu, pstrikeouts_h_sigma),
+    pstrikeouts_h_mu ~ dnorm(0,1),
+    pstrikeouts_h_sigma ~ dcauchy(0,2),
+    pstrikeouts_a ~ dnorm(pstrikeouts_a_mu, pstrikeouts_a_sigma),
+    pstrikeouts_a_mu ~ dnorm(0,1),
+    pstrikeouts_a_sigma ~ dcauchy(0,2),     
+    ###
+    strikes_h ~ dnorm(strikes_h_mu, strikes_h_sigma),
+    strikes_h_mu ~ dnorm(0,1),
+    strikes_h_sigma ~ dcauchy(0,2),
+    strikes_a ~ dnorm(strikes_a_mu, strikes_a_sigma),
+    strikes_a_mu ~ dnorm(0,1),
+    strikes_a_sigma ~ dcauchy(0,2),
+    ###standard priors
+    c(a, b, c, d) ~ dnorm(0,1),
+    ###  
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1),
+    sigma ~ dcauchy(0,2)),
+  data=mydata,
+  iter=5000, warmup=500, chains=1, cores=4,
+  control = list(adapt_delta = 0.99, max_treedepth = 15))
+
+```
+
+nonmlm.m and varint.m object are not in environment. 
+
+```{r modelcompareplot, eval=FALSE}
+obj <- compare(nonmlm.m, varint.m, vivs.m)
+plot(compare(nonmlm.m, varint.m, vivs.m))
+compare(nonmlm.m, varint.m, vivs.m)
+
+str(obj)
+TEMP <- NULL
+TEMP$WAIC <-obj$WAIC 
+TEMP$SE <- obj$SE
+TEMP$pWAIC <- obj$WAIC - obj$pWAIC 
+
+TEMP <- as.data.frame(TEMP)
+TEMP$MODEL <- c("Varying Intercept Only", "Varying Intercept & Slope", "Standard Regression")
+
+TEMP <- TEMP[1:2,]
+TEMP
+colnames(TEMP) <- c("Out of Sample", "SE", "In Sample", "MODEL")
+mdata <- melt(TEMP, id=c("MODEL", 'SE'))
+mdata
+colnames(mdata) <- c("MODEL", "SE", "Deviance", "value")
+'ggplot(TEMP, aes(y=MODEL)) +
+  geom_point(shape = 1, aes(x=WAIC)) +
+  geom_segment((aes(xend=WAIC, yend=MODEL, x=2*SE + WAIC))) + 
+  geom_segment((aes(xend=WAIC, yend=MODEL, x=WAIC-2*SE))) +
+  geom_point(aes(x=pWAIC)) +
+  theme_minimal() +
+  labs(title="Comparing Model Deviance") +
+    xlab("Deviance") + ylab("") +
+  theme(legend.position="bottom") '
+
+mdata
+mdata$MODEL <- as.factor(mdata$MODEL)
+#levels(mdata$MODEL) <- gsub(" ", "\n", levels(mdata$MODEL))
+levels(mdata$MODEL) <- c("Varying\nIntercept\nOnly", "Varying\nIntercept\n& Slope")
+mdata$MODEL <- relevel(mdata$MODEL, "Varying\nIntercept\n& Slope")
+
+ggplot(mdata, aes(y=MODEL)) +
+  geom_point(aes(x=value, shape = Deviance)) +
+  geom_segment((aes(xend=value, yend=MODEL, x=2*SE + value)), data = mdata[mdata$Deviance=="Out of Sample", ] ) + 
+  geom_segment((aes(xend=value, yend=MODEL, x=-2*SE + value)), data = mdata[mdata$Deviance=="Out of Sample", ] ) + 
+  theme_minimal() +
+  labs(title="Comparing Model Deviance") +
+    xlab("Deviance") + ylab("") +
+  scale_shape_manual(values = c(1, 19)) +
+  theme(legend.position="bottom") 
+
+```
+
+###Posterior Distributions  
+
+Simulate game 1 with team and fielding effects only.
+
+```{r game1data, warning=FALSE, message=FALSE, echo=FALSE, include=FALSE}
+wspre <- read_csv("data/WS Investigation/wsprezero.csv")
+wspre <- as.data.frame(wspre)
+wspre$home <- as.factor(wspre$home)
+wspre$away <- as.factor(wspre$away)
+sim.model1 <- sim(vivs.m, data=as.data.frame(wspre), n=750)
+```
+
+Simulate game 2 with game 1 data and new model.
+
+```{r game2modeldata, warning=FALSE, message=FALSE, echo=FALSE, include=FALSE}
+ws <- read_csv("data/WS Investigation/ws.csv")
+ws <- as.data.frame(ws)
+namesws <- colnames(ws)
+attributes(ws) <- NULL
+ws <- as.data.frame(ws)
+colnames(ws) <- namesws
+colnames(ws)[1] <- "X"
+###
+TEMP <- ws[1,] #rdiff is how they performed as the home team
+TEMP2 <- rbind(mydata, TEMP)
+```
+```{r game2model, eval=FALSE, echo=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+
+game2.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home- fielding
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=TEMP2,
+  iter=1000, warmup=250, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+```
+```{r game2prob, warning=FALSE, echo=FALSE, include=FALSE}
+sim.model2 <- sim(game2.m, data=as.data.frame(TEMP), n=750)
+```
+
+Simulate game 3 with LAD now as home team- like game 1, use team and fielding effects.
+
+```{r game3modeldata, echo=FALSE}
+TEMP <- ws[1:2,] #rdiff is how they performed as the home team
+TEMP2 <- rbind(mydata, TEMP)
+```
+```{r game3model, eval=FALSE, echo=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+
+game3.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home- fielding
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=TEMP2,
+  iter=1000, warmup=250, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+```
+```{r game3simdata, warning=FALSE, message=FALSE, echo=FALSE, include=FALSE}
+wsg3pre <- read_csv("data/WS Investigation/wsg3pre.csv")
+wsg3pre <- as.data.frame(wsg3pre)
+nameswsg3pre <- colnames(wsg3pre)
+attributes(wsg3pre) <- NULL
+wsg3pre <- as.data.frame(wsg3pre)
+colnames(wsg3pre) <- nameswsg3pre
+colnames(wsg3pre)[1] <- "X"
+```
+```{r game3prob, echo=FALSE, include=FALSE}
+sim.model3 <- sim(game3.m, data=as.data.frame(wsg3pre), n=750)
+```
+
+Simulate game 4 with game 3 data and new model.
+
+```{r game4modeldata, echo=FALSE, include=FALSE}
+TEMP <- ws[1:3,] #rdiff is how they performed as the home team
+TEMP2 <- rbind(mydata, TEMP)
+```
+```{r game4model, eval=FALSE, echo=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+
+game4.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home- fielding
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=TEMP2,
+  iter=1000, warmup=250, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+```
+```{r game4prob, echo=FALSE, include=FALSE}
+TEMP <- ws[3,] 
+sim.model4 <- sim(game4.m, data=as.data.frame(TEMP), n=750)
+```
+
+Simulate game 5 with games 3 and 4 data and new model.
+```{r game5modeldata, echo=FALSE, include=FALSE}
+TEMP <- ws[1:4,] #rdiff is how they performed as the home team
+TEMP2 <- rbind(mydata, TEMP)
+```
+```{r game5model, eval=FALSE, echo=FALSE, message=FALSE}
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+Sys.setenv(LOCAL_CPPFLAGS = '-march=native')
+
+game5.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home- fielding
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=TEMP2,
+  iter=1000, warmup=250, chains=1, cores=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+```
+```{r game5prob, echo=FALSE, include=FALSE}
+TEMP <- ws[3:4,] 
+sim.model5 <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+```
+
+```{r predictiondataset, echo=FALSE}
+TEMP <- NULL
+TEMP1 <- -1 * as.data.frame(sim.model1) #predicting game 1- make negative for probability LAD (away) win greater than 0
+
+TEMP2 <- -1* as.data.frame(sim.model2) #predicting game 2- make negative for probability LAD (away) win greater than 0
+colnames(TEMP2) <- c("V2")
+
+TEMP3 <- as.data.frame(sim.model3) #predicting game 3
+TEMP3$V1 = TEMP3$V1
+colnames(TEMP3) <- c("V3")
+
+TEMP4 <- as.data.frame(sim.model4) #predicting game 4 (LA won game 3)
+TEMP4$V1 = TEMP4$V1
+colnames(TEMP4) <- c("V4")
+
+TEMP5 <- as.data.frame(sim.model5) #predicting game 5
+TEMP5$V1 = TEMP5$V1
+colnames(TEMP5) <- c("V5")
+
+TEMP <- cbind(TEMP1, TEMP2, TEMP3, TEMP4, TEMP5)
+```
+
+```{r posteriorplot, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(TEMP) +
+    geom_freqpoly(aes(x=V1, y=..density.., alpha=0.6), col='#c6dbef', size=1.2) +
+    geom_freqpoly(aes(x=V2, y=..density.., alpha=0.7), col='#9ecae1', size=1.2) + #following BOS first win
+    geom_freqpoly(aes(x=V3, y=..density.., alpha=0.8), col='#6baed6', size=1.2) +
+    geom_freqpoly(aes(x=V4, y=..density.., alpha=0.9), col='#3182bd', size=1.2) +
+    geom_freqpoly(aes(x=V5, y=..density.., alpha=1), col='#08519c', size=1.2) +
+    theme_minimal() + guides(fill=FALSE) + 
+    labs(title="World Series 2018: Posterior Predictions Games 1-5", subtitle="Positive x-values indicate LAD Win") +
+    xlab("Difference in Points (LAD - BOS)") +
+  scale_alpha_continuous(labels = c("Game 1", "Game 2", "Game 3", "Game 4", "Game 5")) +
+  theme(legend.position="bottom") +
+  guides(alpha=guide_legend("")) +
+  theme(plot.title = element_text(size=18), plot.subtitle = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.title.x = element_text(size=12),
+        legend.text=element_text(size=12))
+
+```
+
+###Pooled unPooled
+
+```{r CILB, echo=FALSE}
+pred <- NULL
+pred <- data.frame("LB" = c(
+  quantile(TEMP1$V1, 0.025), #game 1 prediction- slightly favor BOS
+  quantile(TEMP2$V2, 0.025), #game 2 prediction- strong favor BOS
+  quantile(TEMP3$V3, 0.025), #game 3 prediction- moderate favor BOS
+  quantile(TEMP4$V4, 0.025), #game4 prediction (LA won game 3)- stronger favor BOS
+  quantile(TEMP5$V5, 0.025)) #game 5 prediction- mild favor BOS
+  ,
+  "UB" = c(
+  quantile(TEMP1$V1, 0.975), #game 1 prediction- slightly favor BOS
+  quantile(TEMP2$V2, 0.975), #game 2 prediction- strong favor BOS
+  quantile(TEMP3$V3, 0.975), #game 3 prediction- moderate favor BOS
+  quantile(TEMP4$V4, 0.975), #game4 prediction (LA won game 3)- stronger favor BOS
+  quantile(TEMP5$V5, 0.975))
+  ,
+  "Mean" = c(
+  mean(TEMP1$V1), #game 1 prediction- slightly favor BOS
+  mean(TEMP2$V2), #game 2 prediction- strong favor BOS
+  mean(TEMP3$V3), #game 3 prediction- moderate favor BOS
+  mean(TEMP4$V4), #game4 prediction (LA won game 3)- stronger favor BOS
+  mean(TEMP5$V5)) #game 5 prediction- mild favor BOS  
+  ,
+  "Game" = c(1:5)) 
+```
+
+```{r}
+hometeam = "LAD"
+TEMP <- mydata %>% filter(home == hometeam)
+mean(TEMP$rdiff)
+
+awayteam = "LAD"
+TEMP <- mydata %>% filter(away == awayteam)
+-1 * mean(TEMP$rdiff)
+
+pred$pool <- c(1.56, 1.56, .84, .84, .84)
+```
+
+```{r}
+pred$nonmlm <- c()
+```
+
+
+```{r pooledunpooled}
+par(mfrow=c(1,1))
+plot(pred$Mean, pred$Game, type = "n", xlim=c(-10, 10), main ="95% CI, Mean, Pooling")
+segments(pred$Mean + pred$LB, pred$Game, pred$Mean + pred$UB, pred$Game)
+points(pred$Mean, pred$Game, col = "red", pch=4) 
+points(pred$pool, pred$Game, col = "green", pch=4) 
+
+head(pred)
+
+pred$unpooled <- c(.84, .84, 2.3, 2.3, 2.3)
+pred$actual <- c(-4, -2, 1, -3, -4)
+
+head(pred)
+
+pred2 <- NULL
+pred2$Mean = c(-0.444, -3.796, 1.26, 1, 1.2, 0.84, 0.84, 2.3, 2.3, 2.3, -4, -5, .5, -3, -4)
+pred2$Game = c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
+pred2$LB = rep(pred$LB, 3)
+pred2$UB = rep(pred$UB, 3)
+pred2$Model <- c(rep(c("Partial Pooling"), 5), rep(c("Pooled"), 5), rep(c("Unpooled"), 5))
+pred2 <- as.data.frame(pred2)
+head(pred2)
+
+ggplot(pred2, aes(y=as.factor(Game), pch=Model)) +
+  geom_point(aes(x=Mean), size=3) +
+  scale_shape_manual(values=c(4, 1, 3))+
+  geom_segment((aes(xend=Mean, yend=Game, x=1.96*LB, col=Game, alpha=Game)), size=1) +
+  geom_segment((aes(xend=Mean, yend=Game, x=1.96*UB, col = Game, alpha=Game)), size=1) + 
+  geom_point(aes(x=Mean), size=3) +
+  scale_shape_manual(values=c(4, 1, 3))+
+  theme_minimal() +
+  labs(title="Partial Pooling with Multi-level Model") +
+  xlab("Difference in Points (LAD - BOS)") + ylab("World Series Game") +
+  theme(legend.position="bottom") + xlim(-20, 20) + guides(alpha=FALSE) + guides(col=FALSE) +
+  theme(plot.title = element_text(size=18), plot.subtitle = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.title.x = element_text(size=12),
+        legend.text=element_text(size=12))
+```
+
+
+```{r pvalues}
+prob_success1 <- 1- sum(sim.model1>0) / length(sim.model1); prob_success1 #subtract from 1 for LAD away
+prob_success2 <- 1- sum(sim.model2>0) / length(sim.model2); prob_success2 #subtract from 1 for LAD away
+prob_success3 <- sum(sim.model3>0) / length(sim.model3); prob_success3
+prob_success4 <- sum(sim.model4>0) / length(sim.model4); prob_success4
+prob_success5 <- sum(sim.model5>0) / length(sim.model5); prob_success5
+```
+
+```{r binomprob, echo=FALSE, include=FALSE}
+dbinom(4, size=7, prob=prob_success1) + dbinom(5, size=7, prob=prob_success1) + dbinom(6, size=7, prob=prob_success1) + dbinom(7, size=7, prob=prob_success1)
+dbinom(4, size=6, prob=prob_success2) + dbinom(5, size=6, prob=prob_success2) + dbinom(6, size=6, prob=prob_success2)
+dbinom(4, size=5, prob=prob_success3) + dbinom(5, size=5, prob=prob_success3) 
+dbinom(3, size=4, prob=prob_success4) + dbinom(4, size=4, prob=prob_success4)
+dbinom(3, size=3, prob=prob_success5)
+```
+
+###Parametric Analysis
+
+```{r game5data2, warning=FALSE, message=FALSE, echo=FALSE, message=FALSE}
+###read in pre-game data
+wsg5prepbp <- read_csv("data/WS Investigation/wsg5prepbp.csv")
+wspre <- wsg5prepbp
+###if NA's, try below
+wspre <- as.data.frame(wspre)
+wspre$home <- as.factor(wspre$home)
+wspre$away <- as.factor(wspre$away)
+```
+
+```{r game5parametric, echo=FALSE, message=FALSE}
+###game 5 parametric
+TEMP <- wspre[1,] 
+link.model <- link(game5.m, data=data.frame(TEMP))
+mean(link.model$BH) + mean(link.model$BA)
+mean(link.model$PH) + mean(link.model$PA)
+mean(link.model$FH) + mean(link.model$FA)
+mean(link.model$A)
+mean(link.model$mu)
+.12+.14+.17
+
+#Team Effects
+#BOS (away)
+BOSA <- melt(link.model$A); colnames(BOSA) <- c("Category", "x2bat", "Value")
+BOSA$Category = rep("BOS", nrow(BOSA)); 
+BOSA <- BOSA[,c("Category", "Value")]
+BOSA$Value = BOSA$Value * -1  #for visualization
+#LAD (home)
+LADH <- melt(link.model$A); colnames(LADH) <- c("Category", "x2pit", "Value")
+LADH$Category = rep("LAD", nrow(LADH))
+LADH <- LADH[,c("Category", "Value")]
+LADH$Value = LADH$Value 
+#Batting Effects
+#LAD home bat
+LADBH <- melt(link.model$BH); colnames(LADBH) <- c("Category", "x2bat", "Value")
+LADBH$Category = rep("LAD", nrow(LADBH)); 
+LADBH <- LADBH[,c("Category", "Value")]
+#head(LADBH); str(LADBH)
+#BOS away bat
+BOSBA <- melt(link.model$BA); colnames(BOSBA) <- c("Category", "x2pit", "Value")
+BOSBA$Category = rep("BOS", nrow(BOSBA))
+BOSBA <- BOSBA[,c("Category", "Value")]
+BOSBA$Value = BOSBA$Value * -1 #for visualization
+#Pitching Effects
+#LAD home pit
+LADPH <- melt(link.model$PH); colnames(LADPH) <- c("Category", "x2bat", "Value")
+LADPH$Category = rep("LAD", nrow(LADPH)); 
+LADPH <- LADPH[,c("Category", "Value")]
+LADPH$Value = LADPH$Value  
+#BOS away pit
+BOSPA <- melt(link.model$PA); colnames(BOSPA) <- c("Category", "x2bat", "Value")
+BOSPA$Category = rep("BOS", nrow(BOSPA)); 
+BOSPA <- BOSPA[,c("Category", "Value")]
+BOSPA$Value = BOSPA$Value * -1 #for visualization
+#Fielding Effects
+#BOS fielding away
+BOSFA <- melt(link.model$FA); colnames(BOSFA) <- c("Category", "x2bat", "Value")
+BOSFA$Category = rep("BOS", nrow(BOSFA)); 
+BOSFA <- BOSFA[,c("Category", "Value")]
+BOSFA$Value = BOSFA$Value * -1 #for visualization
+#LAD fielding home
+LADFH <- melt(link.model$FH); colnames(LADFH) <- c("Category", "x2pit", "Value")
+LADFH$Category = rep("LAD", nrow(LADFH))
+LADFH <- LADFH[,c("Category", "Value")]
+LADFH$Value = LADFH$Value 
+
+TEMP1 <- as.data.frame(rbind(BOSA, LADH)) #, 
+TEMP1$Group <- rep("Team", nrow(TEMP1))
+TEMP2 <- as.data.frame(rbind(BOSBA, LADBH)) #,
+TEMP2$Group <- rep("Batting", nrow(TEMP2))
+TEMP3 <- as.data.frame(rbind(BOSPA, LADPH)) #,
+TEMP3$Group <- rep("Pitching", nrow(TEMP3))
+TEMP4 <- as.data.frame(rbind(BOSFA, LADFH)) #,
+TEMP4$Group <- rep("Fielding", nrow(TEMP4))
+TEMP5 <- rbind(TEMP1, TEMP2, TEMP3, TEMP4)
+
+ggplot(TEMP5) + 
+  geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian") +
+  facet_wrap(vars(Group), scales="free") +
+  theme_minimal() +
+  labs(title="Game 5: Parametric Analysis", 
+       subtitle="Posterior Distributions of Difference in Runs For Each Parameter") +
+    xlab("Difference in Points") +
+  theme(legend.position="bottom") +
+  scale_color_manual( values = c("#a50f15","#08519c")) +
+    theme(plot.title = element_text(size=16), plot.subtitle = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.title.x = element_text(size=12),
+        legend.text=element_text(size=12))
+```
+
+###Real-Time Modeling: Game 5
+
+```{r, echo=FALSE, message=FALSE, include=FALSE}
+surviv <- NULL
+surviv[1] <- prob_success5
+```
+```{r firstinningfirsthalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[2,] #rdiff is how they performed as the home team
+head(TEMP)
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[2] <- prob_success
+```
+```{r firstinning2ndhalf, echo=FALSE, message=FALSE, include=FALSE}
+#BOS starts with 2 runs.
+TEMP <- wspre[3,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[3] <- prob_success
+```
+
+```{r secondinningfirsthalf, echo=FALSE, message=FALSE, include=FALSE}
+#LAD comes back with 1 run.
+TEMP <- wspre[4,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[4] <- prob_success
+```
+```{r secondinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[5,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[5] <- prob_success
+```
+
+```{r thirdinningfirsthalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[6,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[6] <- prob_success
+```
+```{r thirdinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[7,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[7] <- prob_success
+```
+
+```{r fourthinningprior, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[8,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[8] <- prob_success
+```
+
+```{r fourthinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[9,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[9] <- prob_success
+```
+
+```{r fifthinningprior, echo=FALSE, message=FALSE, include=FALSE}
+#BAM! Boston scores another point.
+TEMP <- wspre[10,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[10] <- prob_success
+```
+```{r fifthinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[11,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[11] <- prob_success
+```
+
+```{r sixthinningpiror, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[12,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[12] <- prob_success
+```
+```{r sixthinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[13,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[13] <- prob_success
+```
+
+```{r seventhinningprior, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[14,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[14] <- prob_success
+```
+```{r seventhinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[15,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[15] <- prob_success
+```
+
+```{r eighthinningprior, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[16,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[16] <- prob_success
+```
+```{r eighthinningsecondhalf, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[17,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[17] <- prob_success
+```
+
+```{r ninthinningprior, echo=FALSE, message=FALSE, include=FALSE}
+TEMP <- wspre[18,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[18] <- prob_success
+```
+```{r ninthinningsecond, echo=FALSE, message=FALSE, include=FALSE, eval=FALSE}
+#Drop is BOS batting average, model doesn't assume ending at 9 innings.
+TEMP <- wspre[19,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model) 
+surviv[19] <- prob_success
+```
+
+```{r survivalgraph, echo=FALSE}
+TEMP <- as.data.frame(surviv)
+TEMP$inning <- seq(from=1, to=9.5, by=0.5)
+
+ggplot(TEMP, aes(inning, surviv)) +
+  geom_step(direction="hv", col='#08519c', size=1) +
+  theme_minimal() +
+  labs(title="Game 5: Play-by-Play Probability Updates", subtitle="Probability of LAD Game 5 Win") +
+    xlab("Inning") + ylab('Probably of LAD Win') + scale_x_continuous(breaks=0:9) +
+    theme(plot.title = element_text(size=16), plot.subtitle = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.title.x = element_text(size=12),
+        legend.text=element_text(size=12))
+```
+

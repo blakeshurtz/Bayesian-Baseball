@@ -1,0 +1,6 @@
+"2","Error in sink(type = ""output"") : invalid connection
+"
+"2","Error in map2stan(alist(rdiff ~ dnorm(mu, sigma), mu <- A + BH + PH +  : 
+  Something went wrong in at least one chain. Debug your model while setting chains=1 and cores=1. Once the model is working with a single chain and core, try using multiple chains/cores again.
+invalid connection
+"

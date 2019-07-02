@@ -1,0 +1,21 @@
+mydata2 <- mydata
+#batting
+mydata2$Hh <- scale(mydata$Hh)
+mydata2$B2Bh <- scale(mydata$B2Bh)
+mydata2$B3Bh <- scale(mydata$B3Bh)
+mydata2$BHRh <- scale(mydata$BHRh)
+mydata2$BBBh <- scale(mydata$BBBh)
+mydata2$Ha <- scale(mydata$Ha)
+mydata2$B2Ba <- scale(mydata$B2Ba)
+mydata2$B3Ba <- scale(mydata$B3Ba)
+mydata2$BHRa <- scale(mydata$BHRa)
+mydata2$BBBa <- scale(mydata$BBBa)
+#pitching
+mydata2$HHAh <- scale(mydata$HHAh)
+mydata2$PBBh <- scale(mydata$PBBh)
+mydata2$PSOh <- scale(mydata$PSOh)
+mydata2$Strh <- scale(mydata$Strh)
+mydata2$HHAa <- scale(mydata$HHAa)
+mydata2$PBBa <- scale(mydata$PBBa)
+mydata2$PSOa <- scale(mydata$PSOa)
+mydata2$Stra <- scale(mydata$Stra)

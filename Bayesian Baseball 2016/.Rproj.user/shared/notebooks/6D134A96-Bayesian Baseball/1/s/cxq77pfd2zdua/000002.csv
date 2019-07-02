@@ -1,0 +1,29 @@
+"0","#sample from posterior"
+"0","postmodel <- extract.samples( model, n=5000)"
+"0","postmodel.df <- as.data.frame(postmodel)"
+"0","#str(postmodel)"
+"0","#Simulating posterior distributions all opposing teams"
+"0","d.pred <- list(opp_team = 1:20)"
+"0","#sim function to plot distribution of scores- This accounts for variance "
+"0","sim.model <- sim( model , data=d.pred)"
+"1","[ 100 / 1000 ]"
+"1","[ 200 / 1000 ]"
+"1","[ 300 / 1000 ]"
+"1","[ 400 / 1000 ]"
+"1","[ 500 / 1000 ]"
+"1","[ 600 / 1000 ]"
+"1","[ 700 / 1000 ]"
+"1","[ 800 / 1000 ]"
+"1","[ 900 / 1000 ]"
+"1","[ 1000 / 1000 ]"
+"1","
+"
+"0","#str(sim.model)"
+"0","#CI for scores by team"
+"0","pred.p <- apply( sim.model, 2 , mean)"
+"0","pred.p.PI <- apply( sim.model, 2 , HPDI, prob=.95 )"
+"0","pred.p2 <-as.data.frame(pred.p)"
+"0","pred.p.PI2 <-as.data.frame(pred.p.PI)"
+"0","pred.p.PI2 <- t(pred.p.PI2)"
+"0","d<-cbind(pred.p2, pred.p.PI2, 1:20)"
+"0","names(d) <- c(""mean"", ""lower"", ""upper"", ""games"")"

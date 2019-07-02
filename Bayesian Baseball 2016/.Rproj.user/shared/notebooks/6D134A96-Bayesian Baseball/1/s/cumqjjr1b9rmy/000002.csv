@@ -1,0 +1,2 @@
+"0","probabilities <- c(.597, .527, .518, .528, .5515, .5215, .641)"
+"0","plot(probabilities, type=""b"", xlab=""Games 1 through 7"", main=""Conditional Probability of Single-Game Success"", ylim=c(.4,.7))"

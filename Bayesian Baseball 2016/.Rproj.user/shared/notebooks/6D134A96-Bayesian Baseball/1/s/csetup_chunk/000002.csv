@@ -1,0 +1,37 @@
+"0","library(rethinking) "
+"2","Loading required package: rstan
+"
+"2","package ‘rstan’ was built under R version 3.4.4"
+"2","Loading required package: ggplot2
+"
+"2","package ‘ggplot2’ was built under R version 3.4.4"
+"2","Loading required package: StanHeaders
+"
+"2","package ‘StanHeaders’ was built under R version 3.4.4"
+"2","rstan (Version 2.17.3, GitRev: 2e1f913d3ca3)
+"
+"2","For execution on a local, multicore CPU with excess RAM we recommend calling
+options(mc.cores = parallel::detectCores()).
+To avoid recompilation of unchanged Stan programs, we recommend calling
+rstan_options(auto_write = TRUE)
+"
+"2","Loading required package: parallel
+"
+"2","rethinking (Version 1.72)
+"
+"0","library(dplyr)"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","set.seed(1234)"

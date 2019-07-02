@@ -1,0 +1,86 @@
+"0","hometeam = ""BOS"""
+"0","awayteam = ""LAD"""
+"0","#BOSTONs Performance (home)"
+"0","TEMP <- mydata %>% filter(home == hometeam)"
+"0","#link.model <- link(mdiff2, data=data.frame(TEMP))"
+"0","link.model <- link(vivs.m, data=data.frame(TEMP))"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","mean(link.model$mu)#BOS is better by 1.65 points."
+"1","[1]"
+"1"," 1.664305"
+"1","
+"
+"0","#this is a function of:"
+"0","mean(link.model$A) #intercepts- 0.33 team effect"
+"1","[1]"
+"1"," 0.07807858"
+"1","
+"
+"0","mean(link.model$BH) #home team- 2.65 pts for BOS- batting and pitching"
+"1","[1]"
+"1"," 7.569824"
+"1","
+"
+"0","mean(link.model$PH) #away team- 1.12 points for away team batting and pitching"
+"1","[1]"
+"1"," -4.940024"
+"1","
+"
+"0","mean(link.model$FH) #fielding- BOS- .09 pts for fielding"
+"1","[1]"
+"1"," 0.02289707"
+"1","
+"
+"0","#LAD's performance (away)"
+"0","TEMP <- mydata %>% filter(away == awayteam)"
+"0","#link.model2 <- link(mdiff2, data=data.frame(TEMP))"
+"0","link.model2 <- link(vivs.m, data=data.frame(TEMP))"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","mean(link.model2$mu)#LAD is better by -1.48 points."
+"1","[1]"
+"1"," -1.46756"
+"1","
+"
+"0","#this is a function of:"
+"0","mean(link.model2$A) #intercepts- 0.02 pts team effect"
+"1","[1]"
+"1"," 0.01895926"
+"1","
+"
+"0","mean(link.model2$BA) #home team- -0.16 for home team "
+"1","[1]"
+"1"," -1.669907"
+"1","
+"
+"0","mean(link.model2$PA) #away team- 1.79 points for LAD"
+"1","[1]"
+"1"," -0.119133"
+"1","
+"
+"0","mean(link.model2$FA) #fielding- .34 pts for fielding- HOME TEAM"
+"1","[1]"
+"1"," 0.3302709"
+"1","
+"

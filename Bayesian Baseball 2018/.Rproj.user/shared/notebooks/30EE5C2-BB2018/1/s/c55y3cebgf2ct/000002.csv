@@ -1,0 +1,6 @@
+"0","posterior.samples <- extract.samples(vivs.m, inc_warmup=TRUE) #sample from model posterior distribution"
+"0","sigma.posterior <- as.data.frame(posterior.samples$sigma); "
+"0","sigma.posterior$index <- seq(1:nrow(sigma.posterior))"
+"0","ggplot(sigma.posterior, aes(x=index, y=posterior.samples$sigma)) + geom_line() + theme_minimal() +"
+"0","  ylab(""sigma"") + xlab("""") + ggtitle(""Traceplot of Sigma"") +"
+"0","  geom_rect(aes(xmin=0, xmax=1000, ymin=2, ymax=2.25), alpha=0.005)"

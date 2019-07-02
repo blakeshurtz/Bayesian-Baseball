@@ -1,0 +1,6 @@
+"0","dbinom(4, size=7, prob=prob_success) + dbinom(5, size=7, prob=prob_success) + dbinom(6, size=7, prob=prob_success) + dbinom(7, size=7, prob=prob_success)
+"
+"1","[1]"
+"1"," 0.8687187"
+"1","
+"

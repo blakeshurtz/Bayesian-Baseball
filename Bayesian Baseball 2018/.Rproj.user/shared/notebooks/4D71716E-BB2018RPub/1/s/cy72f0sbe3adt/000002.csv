@@ -1,0 +1,2 @@
+"0","ggplot(mydata, aes(rdiff)) + geom_histogram(binwidth=1, fill=""white"", color=""black"") + theme_minimal() +"
+"0","  xlab((""Difference in Scores (Home - Away)"")) + ylab(""Frequency"") + ggtitle(""Distribution of Difference in Runs"")"

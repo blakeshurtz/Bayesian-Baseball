@@ -1,0 +1,6 @@
+"0","library(knitr)"
+"0","Cubs <- c(0, 5, 0, 2, 3, 9, 8)"
+"0","Indians <- c(6, 1, 1, 7, 2, 3, 7)"
+"0","ws <- as.data.frame(rbind(Cubs, Indians))"
+"0","names(ws) <- seq(1:7)"
+"0","kable(head(ws), caption = ""Runs Scored in 2016 Series"")"

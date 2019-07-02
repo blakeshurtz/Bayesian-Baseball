@@ -1,0 +1,80 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+###test model fit
+
+
+
+```{r}
+sim.model.all <- link(game5.m, data=mydata, n=1500) #simulate all games in normal season
+rdiff <- colMeans(sim.model.all$mu); rdiff <- as.data.frame(rdiff); colnames(rdiff) <- "rdiff.pred"
+rdiff$rdiff.act <- mydata$rdiff
+rdiff$compare <- ifelse(sign(rdiff$rdiff.pred) == sign(rdiff$rdiff.act), 1, 0)
+sum(rdiff$compare)/nrow(rdiff)  #number of games where mean score is of the same sign
+```
+
+```{r}
+###set all game-level factors to 0
+TEMP <- mydata; TEMP[-c(1,2,3,4,57:64)] <- 0 
+sim.model.all <- link(game5.m, data=TEMP, n=1500) #simulate all games in normal season
+rdiff <- colMeans(sim.model.all$mu); rdiff <- as.data.frame(rdiff); colnames(rdiff) <- "rdiff.pred"
+rdiff$rdiff.act <- mydata$rdiff
+rdiff$compare <- ifelse(sign(rdiff$rdiff.pred) == sign(rdiff$rdiff.act), 1, 0)
+sum(rdiff$compare)/nrow(rdiff)  #number of games where mean score is of the same sign
+```
+
+###
+
+```{r game5model, eval=FALSE, echo=FALSE, message=FALSE}
+wsmodelelasticity <- read.csv("D:/Google Drive/Life/Statistics/Bayesian Baseball II/data/WS Investigation/wsmodelelasticity.csv")
+TEMP <- wsmodelelasticity; TEMP <- rbind(mydata, TEMP) #update model (after game 4)
+
+set.seed(1234)
+options(mc.cores = parallel::detectCores())
+game5.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    ###likelihood
+    mu <- A + BH + PH + BA + PA + FH + FA,
+    #varying intercepts
+    A <- h[home] + a[away] + a, 
+    #home- batting
+    BH <- hits_h[home] * Hh + double_h[home] * B2Bh + triple_h[home] * B3Bh + 
+         HR_h[home] * BHRh + balls_h[home] * BBBh + bh, 
+    #home- pitching
+    PH <-  hits_allowed_h[home] * HHAh + pballs_h[home] * PBBh + 
+          pstrikeouts_h[home] * PSOh +  strikes_h[home] * Strh + ph,
+    #away- batting
+    BA <- hits_a[away] * Ha + double_a[away] * B2Ba + triple_a[away] * B3Ba + 
+      HR_a[away] * BHRa + balls_a[away] * BBBa +  ba, 
+    #away- pitching
+    PA <- hits_allowed_a[away] * HHAa + pballs_a[away] * PBBa + 
+      pstrikeouts_a[away] * PSOa + strikes_a[away] * Stra + pa,
+    #home- fielding
+    FH <- fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fh,
+    FA <-  fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a + fa,
+    ###adaptive priors
+    c(h, hits_h, double_h, triple_h, HR_h, balls_h, hits_allowed_h, pballs_h, 
+      pstrikeouts_h, strikes_h)[home] ~ dmvnormNC(sigma_home,Rho_home),
+    c(a, hits_a, double_a, triple_a, HR_a, balls_a, hits_allowed_a, pballs_a, 
+      pstrikeouts_a, strikes_a)[away] ~ dmvnormNC(sigma_away,Rho_away),
+    ###standard priors
+    c(a, bh, ph, fh, ba, pa, fa) ~ dnorm(0,1), #hyperpriors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dnorm(0,1), #scaled variables
+    sigma_home ~ dcauchy(0,2),
+    sigma_away ~ dcauchy(0,2),
+    Rho_home ~ dlkjcorr(4),
+    Rho_away ~ dlkjcorr(4),
+    sigma ~ dcauchy(0,2)),
+  data=TEMP,
+  iter=1200, warmup=250, chains=1, cores=4)
+```
+
+```{r}
+sim.model5 <- sim(game5.m, data=as.data.frame(wsg5prepbp[1,]), n=1500) #simulate game 5 with pre-game data (LAD home)
+hist(sim.model5)
+prob_success5 <- sum(sim.model5>0) / length(sim.model5)
+prob_success5
+```
+

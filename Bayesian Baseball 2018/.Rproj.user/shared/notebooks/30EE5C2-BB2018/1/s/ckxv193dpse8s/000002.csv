@@ -1,0 +1,29 @@
+"0","wspre <- read_csv(""data/WS Investigation/wsprezero.csv"")"
+"2","Missing column names filled in: 'X1' [1]"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  home = [31mcol_character()[39m,
+  away = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","wspre <- as.data.frame(wspre)"
+"0","wspre$home <- as.factor(wspre$home)"
+"0","wspre$away <- as.factor(wspre$away)"
+"0","sim.model <- sim(vivs.m, data=as.data.frame(wspre), n=750)"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","#sim.model <- sim(mdiff2, data=as.data.frame(wspre), n=750)"
+"0","hist(sim.model)"

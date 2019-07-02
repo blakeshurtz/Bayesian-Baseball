@@ -1,0 +1,3 @@
+"0","set.seed(1234)"
+"0","options(mc.cores = parallel::detectCores())"
+"0","Sys.setenv(LOCAL_CPPFLAGS = '-march=native')"

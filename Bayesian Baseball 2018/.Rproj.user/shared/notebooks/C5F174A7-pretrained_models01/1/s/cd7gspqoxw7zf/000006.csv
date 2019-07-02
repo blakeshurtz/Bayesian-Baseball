@@ -1,0 +1,9 @@
+"0","library(keras)"
+"0","# instantiate the model"
+"0","model <- application_resnet50(weights = 'imagenet')"
+"0","# load the image"
+"0","img_path <- ""car.jpg"""
+"0","img <- image_load(img_path, target_size = c(224,224))"
+"2","Error in py_call_impl(callable, dots$args, dots$keywords) : 
+  FileNotFoundError: [Errno 2] No such file or directory: 'car.jpg'
+"

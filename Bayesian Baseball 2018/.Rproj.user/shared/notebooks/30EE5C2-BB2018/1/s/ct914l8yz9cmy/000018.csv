@@ -1,0 +1,8 @@
+"0","###plot of r-hat (?)"
+"0","ggplot(parameters, aes(Rhat)) + geom_histogram(binwidth=.00018, color=""white"", fill=""grey"") + theme_minimal() +"
+"0","  xlab(TeX(""$\\hat{R}$"")) + ylab(""Frequency"") + ggtitle(""Gelman-Rubin Convergence Diagnostic"") +"
+"0","    theme(plot.title = element_text(size=24), "
+"0","        axis.text.x = element_text(size=18), axis.title.x = element_text(size=18),"
+"0","        axis.text.y = element_text(size=18), axis.title.y = element_text(size=18),"
+"0","        legend.text=element_text(size=18), legend.title = element_text(size=18), legend.position=""top"","
+"0","        strip.text = element_text(18)) "

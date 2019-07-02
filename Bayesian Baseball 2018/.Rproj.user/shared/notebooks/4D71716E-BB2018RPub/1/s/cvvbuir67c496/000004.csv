@@ -1,0 +1,4 @@
+"0","###convergence"
+"0","TEMP <- precis(vivs.m, depth=3)"
+"0","ggplot(TEMP, aes(n_eff)) + geom_histogram(binwidth=400, color=""white"", fill=""grey"") + theme_minimal() +"
+"0","  xlab(""Number of Effective Samples"") + ylab(""Frequency"") + ggtitle(""Efficiency of Chain Convergence"")"

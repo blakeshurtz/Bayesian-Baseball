@@ -1,0 +1,5 @@
+"0","TEMP <- mydata"
+"0","TEMP$home <- coerce_index(TEMP$home)"
+"2","NAs introduced by coercion"
+"0","TEMP$away <- coerce_index(TEMP$away)"
+"2","NAs introduced by coercion"

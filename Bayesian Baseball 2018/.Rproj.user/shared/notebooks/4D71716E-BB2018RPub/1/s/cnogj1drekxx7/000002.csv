@@ -1,0 +1,32 @@
+"0","###game 5 parametric"
+"0","TEMP <- wspre[1,] "
+"0","link.model <- link(game5.m, data=data.frame(TEMP))"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","#Team Effects"
+"0","#BOS (away)"
+"0","BOSA <- melt(link.model$A); colnames(BOSA) <- c(""Category"", ""x2bat"", ""Value"")"
+"0","BOSA$Category = rep(""BOS_away"", nrow(BOSA)); "
+"0","BOSA <- BOSA[,c(""Category"", ""Value"")]"
+"0","BOSA$Value = BOSA$Value * -1  #for visualization"
+"0","#LAD (home)"
+"0","LADH <- melt(link.model$A); colnames(LADH) <- c(""Category"", ""x2pit"", ""Value"")"
+"0","LADH$Category = rep(""LAD_home"", nrow(LADH))"
+"0","LADH <- LADH[,c(""Category"", ""Value"")]"
+"0","LADH$Value = LADH$Value # for visualization"
+"0","#Batting Effects"
+"0","#LAD home bat"
+"0","LADBH <- melt(link.model$BH); colnames(LADBH) <- c(""Category"", ""x2bat"", ""Value"")"
+"0","LADBH$Category = rep(""LAD_home"", nrow(LADBH)); "
+"0","LADBH <- LADBH[,c(""Category"", ""Value"")]"
+"0","head(LADBH); str(LADBH)"

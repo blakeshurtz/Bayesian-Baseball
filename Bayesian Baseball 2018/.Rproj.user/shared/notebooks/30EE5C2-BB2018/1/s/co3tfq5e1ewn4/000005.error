@@ -1,0 +1,1 @@
+{"frames":[{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"`colnames<-`(`*tmp*`, value = c(\"Category\", \"x2pit\", \"Value\"))","line_number":0}],"message":"Error in names(x) <- value : \n  'names' attribute [3] must be the same length as the vector [0]\n"}

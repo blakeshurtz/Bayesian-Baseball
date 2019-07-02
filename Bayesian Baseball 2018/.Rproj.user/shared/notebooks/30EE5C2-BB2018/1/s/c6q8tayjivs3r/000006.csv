@@ -1,0 +1,240 @@
+"0","#prior probabilities- see old notes for causes to model change."
+"0","TEMP <- NULL; surviv <- NULL; surviv[1] <- prob_success5"
+"0","TEMP <- wsg5prepbp[2,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[2] <- prob_success "
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[3,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[3] <- prob_success "
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[4,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[4] <- prob_success "
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[5,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[5] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[6,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[6] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[7,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[7] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[8,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[8] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[9,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[9] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[10,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[10] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[11,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[11] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[12,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[12] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[13,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[13] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[14,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[14] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[15,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[15] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[16,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[16] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[17,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[17] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- wsg5prepbp[18,]; sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750); prob_success <- sum(sim.model>0) / length(sim.model); surviv[18] <- prob_success"
+"1","[ 75 / 750 ]"
+"1","[ 150 / 750 ]"
+"1","[ 225 / 750 ]"
+"1","[ 300 / 750 ]"
+"1","[ 375 / 750 ]"
+"1","[ 450 / 750 ]"
+"1","[ 525 / 750 ]"
+"1","[ 600 / 750 ]"
+"1","[ 675 / 750 ]"
+"1","[ 750 / 750 ]"
+"1","
+"
+"0","TEMP <- as.data.frame(surviv)"
+"0","TEMP$inning <- seq(from=1, to=9.5, by=0.5)"
+"0","ggplot(TEMP, aes(inning, surviv)) +"
+"0","  geom_step(direction=""hv"", col='#08519c', size=1.2) +"
+"0","  theme_minimal() +"
+"0","  labs(title=""Game 5: Play-by-Play Probability Updates"", subtitle=""Probability of LAD Game 5 Win"") +"
+"0","  xlab(""Inning"") + ylab('Probably of \n LAD Win') + scale_x_continuous(breaks=0:9) +"
+"0","  theme(plot.title = element_text(size=48), "
+"0","        plot.subtitle = element_text(size=24),"
+"0","        axis.text.x = element_text(size=36), axis.title.x = element_text(size=36),"
+"0","        axis.text.y = element_text(size=36), axis.title.y = element_text(size=36, angle =-0),"
+"0","        legend.text=element_text(size=36)) +"
+"0","  annotate(""text"", x = 8.5, y = .6, size=14,"
+"0","           label = ""BOS scores 1 run in the \n first half of each of the \n 6th, 7th, and 8th innings"") +"
+"0","  geom_segment(aes(x = 9, y = .5, xend = 6.5, yend = .29), col=""#a50f15"", arrow = arrow(length = unit(0.03, ""npc""))) +"
+"0","  geom_segment(aes(x = 9, y = .5, xend = 7.5, yend = .04), col=""#a50f15"", arrow = arrow(length = unit(0.03, ""npc""))) +"
+"0","  geom_segment(aes(x = 9, y = .5, xend = 8.5, yend = .01), col=""#a50f15"", arrow = arrow(length = unit(0.03, ""npc""))) "

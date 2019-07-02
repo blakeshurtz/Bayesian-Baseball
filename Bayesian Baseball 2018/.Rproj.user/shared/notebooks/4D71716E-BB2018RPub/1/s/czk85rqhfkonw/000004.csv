@@ -1,0 +1,6 @@
+"0","prob_success <- sum(sim.model>0) / length(sim.model)"
+"0","prob_success"
+"1","[1]"
+"1"," 0.5506667"
+"1","
+"

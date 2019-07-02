@@ -1,0 +1,43 @@
+"0","#Predicting Game 1"
+"0","d.pred <- list("
+"0","  pitera_norm = -.929, #Hendricks"
+"0","  wl_norm = 1.29, #WL normalized for CLE (from WL dataset)"
+"0","  opp_team = 0) #placeholder"
+"0","#Posterior Simulation"
+"0","set.seed(1234)"
+"0","sim.model <- sim( fullmodel , data=d.pred, n=12000)"
+"1","[ 1200 / 12000 ]"
+"1","[ 2400 / 12000 ]"
+"1","[ 3600 / 12000 ]"
+"1","[ 4800 / 12000 ]"
+"1","[ 6000 / 12000 ]"
+"1","[ 7200 / 12000 ]"
+"1","[ 8400 / 12000 ]"
+"1","[ 9600 / 12000 ]"
+"1","[ 10800 / 12000 ]"
+"1","[ 12000 / 12000 ]"
+"1","
+"
+"0","sim <- as.data.frame(sim.model)"
+"0","#Posterior Statistics"
+"0","pred.p.mean <- apply( sim , 2 , mean ); pred.p.mean"
+"1","      V1 "
+"1","
+"
+"1","1.099136 "
+"1","
+"
+"0","pred.p.PI <- apply( sim, 2 , PI , prob=0.95 ); pred.p.PI"
+"1","   "
+"1","        V1"
+"1","
+3% "
+"1"," -7.413757"
+"1","
+98%"
+"1","  9.662968"
+"1","
+"
+"0","#Plot#Distribution of predicted scores"
+"0","par(mfrow=c(1,1))"
+"0","histgm <- hist(sim$V1, breaks=100, prob=TRUE, main=""Simulated Games"", xlab=""Score"") "

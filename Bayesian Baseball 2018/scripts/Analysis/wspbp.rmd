@@ -1,0 +1,179 @@
+---
+title: "Untitled"
+author: "Blake Shurtz"
+date: "February 14, 2019"
+output: pdf_document
+---
+####First inning (prior)
+
+```{r, eval=FALSE}
+###read in pre-game data
+library(readr)
+wspre <- read_csv("data/WS Investigation/wsg5prepbp.csv")
+wspre <- wsg5prepbp
+###if NA's, try below
+wspre <- as.data.frame(wspre)
+wspre$home <- as.factor(wspre$home)
+wspre$away <- as.factor(wspre$away)
+```
+
+```{r}
+TEMP <- wspre[1,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+LAD has higher chance. (Note, the models need to be updated)
+
+####First Inning, 1st half
+
+```{r}
+TEMP <- wspre[2,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+
+####First Inning, 2nd half
+
+```{r}
+TEMP <- wspre[3,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+OK, weird. Probability of home team winning increases despite Boston having a better inning.
+
+####2nd inning (prior)
+
+```{r}
+TEMP <- wspre[4,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####2nd inning (2nd half)
+
+```{r}
+TEMP <- wspre[5,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+Weird, why?
+
+####3rd inning (prior)
+
+```{r}
+TEMP <- wspre[6,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####3rd inning (2nd half)
+
+```{r}
+TEMP <- wspre[7,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+Big drop is batting average for BOS while LAD maintains. Basically, LAD is getting more hits.
+
+####4th inning (prior)
+
+```{r}
+TEMP <- wspre[8,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####4th inning (2nd half)
+
+```{r}
+TEMP <- wspre[9,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####5th inning (prior)
+
+```{r}
+TEMP <- wspre[10,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####5th inning (2nd half)
+
+```{r}
+TEMP <- wspre[11,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####6th inning (prior)
+
+```{r}
+TEMP <- wspre[12,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####6th inning (2nd half)
+
+```{r}
+TEMP <- wspre[13,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####7th inning (prior)
+
+```{r}
+TEMP <- wspre[14,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####7th inning (2nd half)
+
+```{r}
+TEMP <- wspre[15,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####8th inning (prior)
+
+```{r}
+TEMP <- wspre[16,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####8th inning (2nd half)
+
+```{r}
+TEMP <- wspre[17,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+####9th inning (prior)
+
+```{r}
+TEMP <- wspre[18,] #rdiff is how they performed as the home team
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```
+
+Drop is BOS batting average, model doesn't assume ending at 9 innings.
+
+####9th inning (2nd half)
+
+```{r}
+TEMP <- wspre[19,] #rdiff is how they performed as the home team
+head(TEMP)
+sim.model <- sim(game5.m, data=as.data.frame(TEMP), n=750)
+prob_success <- sum(sim.model>0) / length(sim.model); prob_success
+```

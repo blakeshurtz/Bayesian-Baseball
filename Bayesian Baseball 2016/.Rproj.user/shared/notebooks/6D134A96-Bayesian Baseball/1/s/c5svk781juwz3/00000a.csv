@@ -1,0 +1,3 @@
+"0","plot(histgm, col=ifelse(abs(histgm$breaks) < -7.3, ""red"", "
+"0","      ifelse (abs(histgm$breaks) >9.6, ""red"", ""gray50"")), main=""Simulated Games"","
+"0","     xlab=""Score"", xlim=c(-12,12))"

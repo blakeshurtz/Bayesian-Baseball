@@ -1,0 +1,193 @@
+---
+title: "parametricextra"
+author: "Blake Shurtz"
+date: "March 5, 2019"
+output: html_document
+---
+
+
+```{r, echo=FALSE, message=FALSE, include=FALSE}
+hometeam = "BOS"
+awayteam = "LAD"
+
+#BOSTONs Performance (home)
+TEMP <- mydata %>% filter(home == hometeam)
+link.model <- link(vivs.m, data=data.frame(TEMP))
+
+#LAD's performance (away)
+TEMP <- mydata %>% filter(away == awayteam)
+link.model2 <- link(vivs.m, data=data.frame(TEMP))
+
+###you can look at the mean of a group-level parameter, for example:
+mean(link.model2$mu)#LAD is better by -1.48 points.
+```
+
+```{r, echo=FALSE, message=FALSE, include=FALSE}
+hometeam = "LAD"
+awayteam = "BOS"
+
+#LADs Performance (home)
+TEMP <- mydata %>% filter(home == hometeam)
+link.model3 <- link(vivs.m, data=data.frame(TEMP))
+
+#BOS's performance (away)
+TEMP <- mydata %>% filter(away == awayteam)
+link.model4 <- link(vivs.m, data=data.frame(TEMP))
+```
+
+```{r intercepts, message=FALSE, echo=FALSE}
+#team- intercepts
+#BOS (home)
+BOSH <- melt(link.model$A); colnames(BOSH) <- c("Category", "x2bat", "Value")
+BOSH$Category = rep("BOS_home", nrow(BOSH)); 
+BOSH <- BOSH[,c("Category", "Value")]
+BOSH$Value = BOSH$Value  #for visualization
+#LAD (away)
+LADA <- melt(link.model2$A); colnames(LADA) <- c("Category", "x2pit", "Value")
+LADA$Category = rep("LAD_away", nrow(LADA))
+LADA <- LADA[,c("Category", "Value")]
+LADA$Value = LADA$Value * -1 #for visualization
+#BOS (away)
+BOSA <- melt(link.model4$A); colnames(BOSA) <- c("Category", "x2bat", "Value")
+BOSA$Category = rep("BOS_away", nrow(BOSA)); 
+BOSA <- BOSA[,c("Category", "Value")]
+BOSA$Value = BOSA$Value * -1  #for visualization
+#LAD (home)
+LADH <- melt(link.model3$A); colnames(LADH) <- c("Category", "x2pit", "Value")
+LADH$Category = rep("LAD_home", nrow(LADH))
+LADH <- LADH[,c("Category", "Value")]
+LADH$Value = LADH$Value# for visualization
+#
+TEMP1 <- as.data.frame(rbind(BOSH, LADA)) #BOSA, LADH, 
+TEMP1$Group <- rep("Team Intercepts", nrow(TEMP1)) 
+#ggplot(TEMP1) +  geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian")
+```
+
+```{r batting, message=FALSE, echo=FALSE}
+#BOS home bat
+BOSBH <- melt(link.model$BH); colnames(BOSBH) <- c("Category", "x2bat", "Value")
+BOSBH$Category = rep("BOS_home", nrow(BOSBH)); 
+BOSBH <- BOSBH[,c("Category", "Value")]
+#LAD away bat
+LADBA <- melt(link.model2$BA); colnames(LADBA) <- c("Category", "x2pit", "Value")
+LADBA$Category = rep("LAD_away", nrow(LADBA))
+LADBA <- LADBA[,c("Category", "Value")]
+LADBA$Value = LADBA$Value * -1#for visualization
+#BOS away bat
+BOSBA <- melt(link.model4$BH); colnames(BOSBA) <- c("Category", "x2bat", "Value")
+BOSBA$Category = rep("BOS_away", nrow(BOSBA)); 
+BOSBA <- BOSBA[,c("Category", "Value")]
+BOSBA$Value = BOSBA$Value * -1   #for visualization
+#LAD home bat
+LADBH <- melt(link.model3$BA); colnames(LADBH) <- c("Category", "x2pit", "Value")
+LADBH$Category = rep("LAD_home", nrow(LADBH))
+LADBH <- LADBH[,c("Category", "Value")]
+LADBH$Value = LADBH$Value  #for visualization
+#
+TEMP2 <- as.data.frame(rbind(BOSBH,  LADBA)) #BOSBA, LADBH,
+TEMP2$Group <- rep("Batting", nrow(TEMP2))
+#ggplot(TEMP2) + geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian")
+```
+
+```{r pitching, message=FALSE, echo=FALSE}
+#BOS home pit
+BOSPH <- melt(link.model$PH); colnames(BOSPH) <- c("Category", "x2bat", "Value")
+BOSPH$Category = rep("BOS_home", nrow(BOSPH)); 
+BOSPH <- BOSPH[,c("Category", "Value")]
+BOSPH$Value = BOSPH$Value  #for visualization
+#LAD away pit 
+LADPA <- melt(link.model2$PA); colnames(LADPA) <- c("Category", "x2pit", "Value")
+LADPA$Category = rep("LAD_away", nrow(LADPA))
+LADPA <- LADPA[,c("Category", "Value")]
+LADPA$Value = LADPA$Value * -1 #for visualization
+#BOS away pit
+BOSPA <- melt(link.model4$PH); colnames(BOSPA) <- c("Category", "x2bat", "Value")
+BOSPA$Category = rep("BOS_away", nrow(BOSPA)); 
+BOSPA <- BOSPA[,c("Category", "Value")]
+BOSPA$Value = BOSPA$Value * -1 #for visualization
+#LAD home pit 
+LADPH <- melt(link.model3$PA); colnames(LADPH) <- c("Category", "x2pit", "Value")
+LADPH$Category = rep("LAD_home", nrow(LADPH))
+LADPH <- LADPH[,c("Category", "Value")]
+
+#
+TEMP3 <- as.data.frame(rbind(BOSPH,  LADPA)) #BOSPA, LADPH,
+TEMP3$Group <- rep("Pitching", nrow(TEMP3))
+#ggplot(TEMP3) + geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian")
+```
+
+```{r fielding, message=FALSE, echo=FALSE}
+#BOS fielding home
+BOSFH <- melt(link.model$FH); colnames(BOSFH) <- c("Category", "x2bat", "Value")
+BOSFH$Category = rep("BOS_home", nrow(BOSFH)); 
+BOSFH <- BOSFH[,c("Category", "Value")]
+BOSFH$Value = BOSFH$Value  #for visualization
+#LAD fielding away
+LADFA <- melt(link.model2$FA); colnames(LADFA) <- c("Category", "x2pit", "Value")
+LADFA$Category = rep("LAD_away", nrow(LADFA))
+LADFA <- LADFA[,c("Category", "Value")]
+LADFA$Value = LADFA$Value *-1 #for visualization
+#BOS fielding away
+BOSFA <- melt(link.model4$FH); colnames(BOSFA) <- c("Category", "x2bat", "Value")
+BOSFA$Category = rep("BOS_away", nrow(BOSFA)); 
+BOSFA <- BOSFA[,c("Category", "Value")]
+BOSFA$Value = BOSFA$Value * -1 #for visualization
+#LAD fielding home
+LADFH <- melt(link.model3$FA); colnames(LADFH) <- c("Category", "x2pit", "Value")
+LADFH$Category = rep("LAD_home", nrow(LADFH))
+LADFH <- LADFH[,c("Category", "Value")]
+LADFH$Value = LADFH$Value #for visualization
+#
+TEMP4 <- as.data.frame(rbind(BOSFH,  LADFA)) #BOSFA, LADFH,
+TEMP4$Group <- rep("Fielding", nrow(TEMP4))
+#ggplot(TEMP4) +  geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian")
+```
+
+```{r facet, message=FALSE, echo=FALSE, include=FALSE}
+TEMP5 <- rbind(TEMP1, TEMP2, TEMP3, TEMP4)
+
+ggplot(TEMP5) + 
+  geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian") +
+  facet_wrap(vars(Group), scales="free") +
+  theme_minimal() +
+  labs(title="Parametric Analysis") +
+    xlab("Difference in Points") +
+  theme(legend.position="top") +
+  scale_color_manual( values = c("#a50f15","#08519c"))
+```
+
+```{r parametricanalysis}
+
+
+TEMP1 <- as.data.frame(rbind(BOSA, LADH)) #, 
+TEMP1$Group <- rep("Team", nrow(TEMP1))
+TEMP2 <- as.data.frame(rbind(BOSBA, LADPH)) #,
+TEMP2$Group <- rep("BOS- Batting; LAD- Pitching", nrow(TEMP2))
+TEMP3 <- as.data.frame(rbind(BOSPA, LADBH)) #,
+TEMP3$Group <- rep("Pitching", nrow(TEMP3))
+TEMP4 <- as.data.frame(rbind(BOSFA, LADFH)) #,
+TEMP4$Group <- rep("Fielding", nrow(TEMP4))
+TEMP5 <- rbind(TEMP1, TEMP2, TEMP3, TEMP4)
+
+TEMP1 <- as.data.frame(rbind(BOSA, LADH)) #, 
+TEMP1$Group <- rep("Team Effects", nrow(TEMP1))
+TEMP2 <- as.data.frame(rbind(BOSBA, LADPH)) #,
+TEMP2$Group <- rep("BOS- Batting; LAD- Pitching", nrow(TEMP2))
+TEMP3 <- as.data.frame(rbind(BOSPA, LADBH)) #,
+TEMP3$Group <- rep("BOS- Pitching; LAD- Batting", nrow(TEMP3))
+TEMP4 <- as.data.frame(rbind(BOSFA, LADFH)) #,
+TEMP4$Group <- rep("Fielding", nrow(TEMP4))
+TEMP5 <- rbind(TEMP1, TEMP2, TEMP3, TEMP4)
+
+
+
+ggplot(TEMP5) + 
+  geom_density(aes(x = Value, group=Category, col=Category), kernel="gaussian") +
+  facet_wrap(vars(Group), scales="free") +
+  theme_minimal() +
+  labs(title="Parametric Analysis") +
+    xlab("Difference in Points") +
+  theme(legend.position="bottom") +
+  scale_color_manual( values = c("#a50f15","#08519c"))
+```
+

@@ -1,0 +1,18 @@
+"0","wsg3pre <- read_csv(""data/WS Investigation/wsg3pre.csv"")"
+"2","Missing column names filled in: 'X1' [1]"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  Date = [31mcol_character()[39m,
+  home = [31mcol_character()[39m,
+  away = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","wsg3pre <- as.data.frame(wsg3pre)"
+"0","nameswsg3pre <- colnames(wsg3pre)"
+"0","attributes(wsg3pre) <- NULL"
+"0","wsg3pre <- as.data.frame(wsg3pre)"
+"0","colnames(wsg3pre) <- nameswsg3pre"
+"0","colnames(wsg3pre)[1] <- ""X"""

@@ -1,0 +1,5 @@
+"0","ggplot(link.model) + 
+  geom_histogram(x=int) 
+"
+"2","Error: stat_bin requires the following missing aesthetics: x
+"

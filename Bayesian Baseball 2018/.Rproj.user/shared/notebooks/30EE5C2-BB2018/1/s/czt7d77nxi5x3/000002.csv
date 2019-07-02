@@ -1,0 +1,203 @@
+"0","nonmlm.m <- map2stan(
+  alist(
+    rdiff ~ dnorm( mu, sigma),
+    mu <- inter +
+      a + h + 
+      hits_h * Hh + double_h * B2Bh + triple_h * B3Bh + HR_h * BHRh + balls_h * BBBh +
+      hits_a * Ha + double_a * B2Ba + triple_a * B3Ba + HR_a * BHRa + balls_a * BBBa +
+      hits_allowed_h * HHAh + pballs_h * PBBh + pstrikeouts_h * PSOh +  strikes_h * Strh +
+      hits_allowed_a * HHAa + pballs_a * PBBa + pstrikeouts_a * PSOa + strikes_a * Stra +
+      fh1 * PO_h + fh2 * A_h + fh3 * E_h + fh4 * DP_h + fa1 * PO_a + fa2 * A_a + fa3 * E_a + fa4 * DP_a,
+    ###adaptive priors for coefficients
+    inter ~ dunif(-100, 100),
+    h ~ dunif(-100, 100),
+    a ~ dunif(-100, 100),
+    ###
+    hits_h ~ dunif(-100, 100),
+    hits_a ~ dunif(-100, 100),
+    ###
+    double_h ~ dunif(-100, 100),
+    double_a ~ dunif(-100, 100),
+    ###
+    triple_h ~ dunif(-100, 100),
+    triple_a ~ dunif(-100, 100),
+    ###
+    HR_h ~ dunif(-100, 100),
+    HR_a ~ dunif(-100, 100),
+    ###
+    balls_h ~ dunif(-100, 100),
+    balls_a ~ dunif(-100, 100),
+    ###
+    hits_allowed_h ~ dunif(-100, 100),
+    hits_allowed_a ~ dunif(-100, 100),
+    ###
+    pballs_h ~ dunif(-100, 100),
+    pballs_a ~ dunif(-100, 100),
+    ###
+    pstrikeouts_h ~ dunif(-100, 100),
+    pstrikeouts_a ~ dunif(-100, 100),
+    ###
+    strikes_h ~ dunif(-100, 100),
+    strikes_a ~ dunif(-100, 100),
+    ###standard priors
+    c(fh1, fh2, fh3, fh4, fa1, fa2, fa3, fa4) ~ dunif(-100, 100),
+    sigma ~ dcauchy(0,2)),
+  data=mydata2,
+  iter=1000, warmup=100, chains=1, cores=4,
+  control = list(adapt_delta = 0.99, max_treedepth = 15))
+"
+"2","Stripping scale attributes from variable Ha"
+"2","Stripping scale attributes from variable B2Ba"
+"2","Stripping scale attributes from variable B3Ba"
+"2","Stripping scale attributes from variable BHRa"
+"2","Stripping scale attributes from variable BBBa"
+"2","Stripping scale attributes from variable Hh"
+"2","Stripping scale attributes from variable B2Bh"
+"2","Stripping scale attributes from variable B3Bh"
+"2","Stripping scale attributes from variable BHRh"
+"2","Stripping scale attributes from variable BBBh"
+"2","Stripping scale attributes from variable PSOh"
+"2","Stripping scale attributes from variable PBBh"
+"2","Stripping scale attributes from variable HHAh"
+"2","Stripping scale attributes from variable Strh"
+"2","Stripping scale attributes from variable PSOa"
+"2","Stripping scale attributes from variable PBBa"
+"2","Stripping scale attributes from variable HHAa"
+"2","Stripping scale attributes from variable Stra"
+"1","
+"
+"1","SAMPLING"
+"1"," FOR MODEL '"
+"1","c11c682750e7a77731a1d07cd79dc2d4"
+"1","' NOW (CHAIN "
+"1","1"
+"1",").
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Gradient evaluation took 0.004 seconds"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","1000 transitions using 10 leapfrog steps per transition would take 40 seconds."
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Adjust your expectations accordingly!"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","WARNING: There aren't enough warmup iterations to fit the"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","         three stages of adaptation as currently configured."
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","         Reducing each adaptation stage to 15%/75%/10% of"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","         the given number of warmup iterations:"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","           init_buffer = 15"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","           adapt_window = 75"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","           term_buffer = 10"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration:   1 / 1000 [  0%]  (Warmup)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 100 / 1000 [ 10%]  (Warmup)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 101 / 1000 [ 10%]  (Sampling)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 200 / 1000 [ 20%]  (Sampling)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 300 / 1000 [ 30%]  (Sampling)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 400 / 1000 [ 40%]  (Sampling)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 500 / 1000 [ 50%]  (Sampling)"
+"1","
+"
+"1","Chain "
+"1","1"
+"1",": "
+"1","Iteration: 600 / 1000 [ 60%]  (Sampling)"
+"1","
+"
